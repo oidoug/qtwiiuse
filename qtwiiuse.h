@@ -3,6 +3,9 @@
 
 #include <QtGui/QWidget>
 #include "ui_qtwiiuse.h"
+#include <wiiuse.h>
+
+class WiiThread;
 
 class QtWiiUse : public QWidget
 {
@@ -11,9 +14,21 @@ class QtWiiUse : public QWidget
 public:
     QtWiiUse(QWidget *parent = 0, Qt::WFlags flags = 0);
     ~QtWiiUse();
+     inline Ui::QtWiiUseClass* getUi ()
+    {
+        return &ui;
+    }
 
 private:
     Ui::QtWiiUseClass ui;
+    WiiThread *thread;
+    
+private slots:
+    void displayConnectMessage();
+    void connectWii();
+
+signals:
+    void callThreadStart();
 };
 
 #endif // QTWIIUSE_H
