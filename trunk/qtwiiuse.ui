@@ -112,6 +112,12 @@ p, li { white-space: pre-wrap; }
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimum">
+           <number>-180</number>
+          </property>
+          <property name="maximum">
+           <number>180</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -153,6 +159,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item>
          <widget class="QSlider" name="horizontalSlider_3">
+          <property name="minimum">
+           <number>-180</number>
+          </property>
+          <property name="maximum">
+           <number>180</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>

@@ -1,6 +1,7 @@
 #ifndef WIITHREAD_H
 #define WIITHREAD_H
 
+#include <QtGui/QWidget>
 #include <QThread>
 #include "wiiuse.h"
 #include "qtwiiuse.h"
@@ -18,9 +19,16 @@ class WiiThread : public QThread
         wiimote** wiimotes;
         QtWiiUse *parent;
         void readData();
+        bool stop;
+
+    signals:
+        void connectionError();
 
     public slots:
-        void alternaVibrador();
+        void alternaVibrador(int);
+        void alternaAcc(int);
+        void disconnectWiimote();
+        void manageConnError();
 };
 
 #endif // WIITHREAD_H
