@@ -26,6 +26,7 @@ private:
 private slots:
     void displayConnectMessage();
     void connectWii();
+    void reconnectWii();
 
 signals:
     void callThreadStart();

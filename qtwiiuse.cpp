@@ -17,7 +17,7 @@ QtWiiUse::QtWiiUse(QWidget *parent, Qt::WFlags flags)
     ui.horizontalSlider_6->setEnabled(0);
     connect (this->ui.connect_button, SIGNAL (clicked()), this, SLOT (displayConnectMessage()));
     connect (this, SIGNAL (callThreadStart()), this, SLOT (connectWii()));
-    thread = new WiiThread(this);
+    thread = 0;
 }
 
 QtWiiUse::~QtWiiUse()
@@ -28,12 +28,19 @@ void QtWiiUse::displayConnectMessage()
 {
     QMessageBox* mensagem = new QMessageBox ();
     mensagem->setText("Aperte os botoes 1 e 2");
-    mensagem->addButton("Ok", QMessageBox::AcceptRole);
     mensagem->show();
-    emit callThreadStart();
+    connect (mensagem, SIGNAL (finished(int)), this, SIGNAL (callThreadStart()));
 }
 
 void QtWiiUse::connectWii()
 {
+    if (thread == NULL) {
+    thread = new WiiThread(this);
     thread->start();
+    }
+}
+
+void QtWiiUse::reconnectWii ()
+{
+    delete thread;
 }
