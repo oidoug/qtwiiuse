@@ -13,19 +13,26 @@ void WiiThread::run()
     connect (tela->rumble_checkbox, SIGNAL (stateChanged(int)), this, SLOT (alternaVibrador(int)));
     connect (tela->acc_checkbox, SIGNAL (stateChanged(int)), this, SLOT (alternaAcc(int)));
     connect (tela->disconnect_button, SIGNAL (clicked()), this, SLOT (disconnectWiimote()));
+    connect (this, SIGNAL (wiimoteShutdown()), this, SLOT (disconnectWiimote()));
     connect (this, SIGNAL (finished()), parent, SLOT (reconnectWii()));
-    //connect (this, SIGNAL (connectionError()), this, SLOT (manageConnError()));
-    int numConectados;
+    int numConectados = 0;
     wiimotes = wiiuse_init(1);
-    int found_devices;
-    found_devices = wiiuse_find(wiimotes, 1, 10);
-    numConectados = wiiuse_connect(wiimotes, 1);
-    tela->acc_checkbox->setChecked(1);
+    int found_devices = 0;
+    while (found_devices==0)
+        found_devices = wiiuse_find(wiimotes, 1, 10);
+    while (numConectados==0)
+        numConectados = wiiuse_connect(wiimotes, 1);
+    tela->connect_button->setEnabled(0);
     tela->disconnect_button->setEnabled(1);
-    if (numConectados!=0) {
-        int rool, pitch;
-        while (!stop) {
-            if (wiiuse_poll(wiimotes, 1))
+    tela->label->setText("Conectado");
+    tela->acc_checkbox->setEnabled(1);
+    tela->rumble_checkbox->setEnabled(1);
+    tela->ir_checkbox->setEnabled(1);
+    int rool, pitch;
+    while (!stop) {
+        if (wiiuse_poll(wiimotes, 1))
+        {
+            if (wiimotes[0]->event == WIIUSE_EVENT)
             {
                 if (WIIUSE_USING_ACC(wiimotes[0])) {
                     rool = wiimotes[0]->orient.a_roll;
@@ -49,34 +56,37 @@ void WiiThread::run()
                     printf("IR z distance: %f\n", wiimotes[0]->ir.z);
                 }
             }
+            else if (wiimotes[0]->event == WIIUSE_DISCONNECT)
+                emit wiimoteShutdown();
         }
     }
-    else {
-        emit connectionError();
-    }
-
 }
 
 void WiiThread::alternaVibrador(int state)
 {
-        wiiuse_rumble(wiimotes[0], state);
+    wiiuse_rumble(wiimotes[0], state);
 }
 
 void WiiThread::alternaAcc(int state)
 {
-    if (wiimotes!=0)
-        wiiuse_motion_sensing(wiimotes[0], state);
+    wiiuse_motion_sensing(wiimotes[0], state);
 }
 
 void WiiThread::disconnectWiimote()
 {
+    Ui::QtWiiUseClass *temp = parent->getUi();
+    temp->connect_button->setEnabled(1);
+    temp->disconnect_button->setEnabled(0);
+    temp->label->setText("Desconectado");
     stop = 1;
-    parent->getUi()->acc_checkbox->setChecked(0);
-    parent->getUi()->rumble_checkbox->setChecked(0);
-    wiiuse_disconnect(wiimotes[0]);
-//    wiiuse_cleanup (wiimotes, 1);
-}
-
-void WiiThread::manageConnError()
-{
+    temp->acc_checkbox->setChecked(0);
+    temp->rumble_checkbox->setChecked(0);
+    temp->ir_checkbox->setChecked(0);
+    temp->acc_checkbox->setEnabled(0);
+    temp->rumble_checkbox->setEnabled(0);
+    temp->ir_checkbox->setEnabled(0);
+    if (!WIIUSE_DISCONNECT)
+        wiiuse_cleanup (wiimotes, 1);
+    else
+        emit connectionClosed();
 }

@@ -1,10 +1,10 @@
 #include <QtGui/QApplication>
-#include "qtwiiuse.h"
+#include "qtwiicontroller.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QtWiiUse w;
+    QtWiiController w;
     w.show();
     return a.exec();
 }

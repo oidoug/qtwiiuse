@@ -21,14 +21,14 @@ class WiiThread : public QThread
         void readData();
         bool stop;
 
-    signals:
-        void connectionError();
-
     public slots:
         void alternaVibrador(int);
         void alternaAcc(int);
         void disconnectWiimote();
-        void manageConnError();
+
+    signals:
+        void wiimoteShutdown ();
+        void connectionClosed();
 };
 
 #endif // WIITHREAD_H
