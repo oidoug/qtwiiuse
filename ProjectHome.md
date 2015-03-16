@@ -1,0 +1,3 @@
+Um programa simples em Qt para teste do controle remoto do Wii usando a biblioteca WiiUse. O programa é capaz de mostrar quais botões estão precionados, a saída dos acelerômetros e a leitura das fontes de emissão de luz Infra-Vermelha.
+
+A simple Qt application to test the Wii Remote controller using the library WiiUse. The program is capable to show whit buttons are pressed, the accelerometer output and the Infra-Red light emission spots read.
